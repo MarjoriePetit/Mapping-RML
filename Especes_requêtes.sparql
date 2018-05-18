@@ -1,0 +1,15 @@
+SELECT ?nom_cite ?photo {
+?s foaf:name ?nom_cite
+?s foaf:depiction ?photo
+?s dbo:kingdom dbr:Plant
+}
+
+SELECT ?nom_cite ?photo ?annee {
+?s foaf:name ?nom_cite
+?s foaf:depiction ?photo
+?s dbo:kingdom dbr:Plant
+?s cd_protection ?cd_p
+?s2 cd_protection ?cd_p
+?s2 wlo:yearAssessed ?annee
+}
+

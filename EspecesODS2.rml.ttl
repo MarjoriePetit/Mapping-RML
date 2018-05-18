@@ -1,0 +1,66 @@
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+@prefix wlo: <http://purl.org/ontology/wo/> .
+@prefix eli: <http://data.europa.eu/eli/ontology#> .
+
+# bin/RML-Mapper -m EspecesODS2.rml.ttl -o EspecesODS2.ttl
+
+# Semantisation du dataset : https://public.opendatasoft.com/explore/dataset/especes-protegees-et-reglementees/
+
+#------- Ressource ConservationStatus
+<#ConservationStatus> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                      rml:referenceFormulation ql:JSONPath ;
+                      rml:source "especes-protegees-et-reglementees.json" ] ;
+
+    rr:subjectMap [ rr:class wlo:ConservationStatus ; #On defini le type du sujet
+    rr:template "http://ods.dataset.com/ConservationStatus/{cd_protection}" ] ; #puis son URI
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.cd_protection" ] ; #On defini les pptés
+                            rr:predicate schema:identifier ] ,
+
+                          [ rr:objectMap [ rml:reference "$.intitule" ] ;
+                            rr:predicate wlo:threatDescription ;
+                            rr:predicate rdfs:label ] ,
+
+                          [ rr:objectMap [ rml:reference "$.article" ] ;
+                            rr:predicate <http://purl.org/dc/terms/isReferencedBy> ] ,
+                          # http://schema.org/articleSection
+
+                          [ rr:objectMap [ rml:reference "$.url_inpn" ] ;
+                            rr:predicate wlo:populationTrend ] ,
+                            #attention range string et j'ai une url ... sinon schema:url
+
+                          [ rr:objectMap [ rml:reference "$.date_arrete" ] ;
+                            rr:predicate wlo:yearAssessed ] ,
+
+                          # Reference à LegalResource
+                          [ rr:objectMap [ rr:parentTriplesMap <#LegalResource> ] ;
+                            rr:predicate dbo:related ] ,
+
+                          [ rr:objectMap [ rml:reference "$.type" ] ;
+                            rr:predicate  wlo:shortDescription ] .
+
+<#LegalResource>      rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                      rml:referenceFormulation ql:JSONPath ;
+                      rml:source "especes-protegees-et-reglementees.json" ] ;
+
+    rr:subjectMap [ rr:class eli:LegalResource ; #On defini le type du sujet
+    rr:template "http://ods.dataset.com/LegalResource/{cd_doc}" ] ; #puis son URI
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.cd_doc" ] ; #On defini les pptés
+                            rr:predicate eli:number ] ,
+
+                          [ rr:objectMap [ rml:reference "$.arrete" ] ;
+                            rr:predicate  eli:description ;
+                            rr:predicate rdfs:label ] .
+
+                          [ rr:objectMap [ rml:reference "$.url" ] ;
+                            rr:predicate schema:url ] .

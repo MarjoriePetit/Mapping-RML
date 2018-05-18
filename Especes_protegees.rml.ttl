@@ -1,0 +1,48 @@
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+
+# bin/RML-Mapper -m Especes_protegees.rml.ttl -o Especes_protegees.ttl
+
+# Semantisation du dataset : https://public.opendatasoft.com/explore/dataset/especes-protegees-et-reglementees-referentiel/
+
+#------- Ressource Espece
+<#Espece>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+           rml:referenceFormulation ql:JSONPath ;
+           rml:source "especes-protegees-et-reglementees-referentiel.json" ] ;
+
+    rr:subjectMap [ rr:class dbo:Species ; #On defini le type du sujet
+            rr:template "http://dbpedia.org/page/{nom_cite}" ] ; #puis son URI
+
+            # Vérifier comment va sortir l'uri !!! remplacer les espaces par des "_" ?
+
+    # On defini les pptés de la ressource Espece
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.cd_nom" ] ;
+                            # Ici, c'est la clef primaire
+                            rr:predicate schema:identifier ] ,
+
+                          [ rr:objectMap [ rml:reference "$.nom_cite" ] ;
+                            rr:predicate foaf:name ;
+                            rr:predicate rdfs:label ] ,
+
+                          [ rr:objectMap [ rml:reference "$.cd_protection" ] ;
+                            rr:predicate dbo:conservationStatus ] ,
+
+                          [ rr:objectMap [ rml:reference "$.syn_cite" ] ;
+                            rr:predicate dbo:synonym ] ,
+
+                          [ rr:objectMap [ rml:reference "$.nom_francais_cite" ] ;
+                            rr:predicate foaf:name ] ,
+
+                          [ rr:objectMap [ rml:reference "$.precisions" ] ;
+                            rr:predicate schema:about ] ,
+
+                          [ rr:objectMap [ rml:reference "$.cd_nom_cite" ] ;
+                            rr:predicate schema:identifier ] .
