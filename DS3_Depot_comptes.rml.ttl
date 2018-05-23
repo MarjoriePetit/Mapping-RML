@@ -1,0 +1,180 @@
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# bin/RML-Mapper -tm AdresseEtranger -m DS3_Depot_comptes.rml.ttl -o DS3_Depot_comptes.ttl
+
+
+#------- Ressource Depot
+<#Depot>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+          rml:referenceFormulation ql:JSONPath ;
+          rml:source "depot-des-comptes-de-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Document> ; #On defini le type du sujet
+            rr:template "http://ods.dataset.com/Depot/{depot_datecloture}{depot_typedepot}" ] ; #puis son URI
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.depot_datecloture" ] ; #On defini les pptés
+                            rr:predicate <http://dbpedia.org/ontology/closingDate> ] ,
+                          [ rr:objectMap [ rml:reference "$.depot_typedepot" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/subjectTerm> ;
+                            rr:predicate rdfs:label ] ,
+
+                            #référence à Annonce
+                          [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
+                            rr:predicate <http://dbpedia.org/ontology/related> ].
+
+#------- Ressource Société
+<#Société>   rml:logicalSource [ rml:iterator "$.[*].fields" ;
+             rml:referenceFormulation ql:JSONPath ;
+             rml:source "depot-des-comptes-de-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Company> ; #On defini le type du sujet
+            rr:template "http://ods.dataset.com/Societe/{numeroimmatriculation_numeroidentificationrcs}" ] ; #puis son URI
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.denomination" ] ; #On defini les pptés
+                            rr:predicate rdfs:label ;
+                            rr:predicate <http://dbpedia.org/ontology/name> ] ,
+                          [ rr:objectMap [ rml:reference "$.formejuridique" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/legalForm> ] ,
+                          [ rr:objectMap [ rml:reference "$.sigle" ] ;
+                            rr:predicate <http://data.lirmm.fr/ontologies/osp#aInitiales> ] ,
+                            #http://dbpedia.org/ontology/abbreviation
+
+                          [ rr:objectMap [ rml:reference "$.numeroimmatriculation_numeroidentificationrcs" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_number> ] ,
+                          [ rr:objectMap [ rml:reference "$.numeroimmatriculation_codercs" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_code> ] ,
+                          [ rr:objectMap [ rml:reference "$.numeroimmatriculation_nomgreffeimmat" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/registration> ] ,
+
+                    #référence à Annonce
+            [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
+                  rr:predicate <http://dbpedia.org/ontology/related> ],
+
+                    #Référence à AdresseFrance
+            [ rr:objectMap [ rr:parentTriplesMap <#AdresseFrance> ] ;
+                  rr:predicate <http://dbpedia.org/ontology/location> ] ,
+
+                    #Référence à AdresseEtranger
+            [ rr:objectMap [ rr:parentTriplesMap <#AdresseEtranger> ] ;
+                  rr:predicate <http://dbpedia.org/ontology/location> ] .
+
+
+#------- Ressource AdresseEtranger
+<#AdresseEtranger>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                    rml:referenceFormulation ql:JSONPath ;
+                    rml:source "depot-des-comptes-de-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Place> ;
+            rr:template "http://ods.dataset.com/AdresseEtranger/{adresse_etranger}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.adresse_etranger" ] ;
+                            rr:predicate rdfs:label ;
+                            rr:predicate <http://dbpedia.org/ontology/address>] ,
+                          [ rr:objectMap [ rml:reference "$.adresse_etranger_adresse" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/address> ] ,
+                          [ rr:objectMap [ rml:reference "$.adresse_etranger_pays" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/country> ] ,
+
+                              #Référence à GeoPoint ???
+                          [ rr:objectMap [ rr:parentTriplesMap <#GeoPoint> ] ;
+                            rr:predicate <http://dbpedia.org/ontology/sourcePosition> ] .
+
+
+#------- Ressource AdresseFrance
+<#AdresseFrance>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                  rml:referenceFormulation ql:JSONPath ;
+                  rml:source "depot-des-comptes-de-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Place> ;
+            rr:template "http://ods.dataset.com/AdresseFrance/{adresse_}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.adresse_" ] ;
+            rr:predicate rdfs:label ;
+            rr:predicate <http://dbpedia.org/ontology/address>],
+
+            [ rr:objectMap [ rml:reference "$.adresse_france_numerovoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/street-number> ],
+            [ rr:objectMap [ rml:reference "$.adresse_france_typevoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/route> ],
+            [ rr:objectMap [ rml:reference "$.adresse_france_nomvoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/street-name> ],
+            [ rr:objectMap [ rml:reference "$.adresse_france_complgeographique" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/information> ],
+            [ rr:objectMap [ rml:reference "$.adresse_france_bp" ] ;
+                  rr:predicate <http://schema.org/postOfficeBoxNumber> ],
+            [ rr:objectMap [ rml:reference "$.adresse_france_localite" ] ;       #Localité à revoir ?
+                  rr:predicate <http://dbpedia.org/ontology/information> ],
+            [ rr:objectMap [ rml:reference "$.adresse_france_codepostal" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/postalCode> ],
+            [ rr:objectMap [ rml:reference "$.adresse_france_ville" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/city> ],
+
+                        #Référence à GeoPoint
+            [ rr:objectMap [ rr:parentTriplesMap <#GeoPoint> ] ;
+                  rr:predicate <http://dbpedia.org/ontology/sourcePosition> ] .
+
+
+#------- Ressource GeoPoint
+<#GeoPoint>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+             rml:referenceFormulation ql:JSONPath ;
+             rml:source "depot-des-comptes-de-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing> ;
+            rr:template "http://ods.dataset.com/GeoPoint/{geopoint[0]}_{geopoint[1]}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.geopoint[0]" ] ;
+            #rr:predicate rdfs:label ;
+            rr:predicate <http://www.w3.org/2003/01/geo/wgs84_pos#lat>],
+
+            [ rr:objectMap [ rml:reference "$.geopoint[1]" ] ;
+            #rr:predicate rdfs:label ;
+            rr:predicate <http://www.w3.org/2003/01/geo/wgs84_pos#long>].
+
+
+
+#------- Ressource Tribunal
+<#Tribunal> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+            rml:referenceFormulation ql:JSONPath ;
+            rml:source "depot-des-comptes-de-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://data.lirmm.fr/ontologies/osp#Tribunal> ;
+            rr:template "http://ods.dataset.com/Tribunal/{tribunal}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.tribunal" ] ;
+            rr:predicate rdfs:label ;
+            rr:predicate <http://data.lirmm.fr/ontologies/osp#typeTribunal> ],
+        [ rr:objectMap [ rml:reference "$.numerodepartement" ] ;
+            rr:predicate <http://data.lirmm.fr/ontologies/osp#aArrondissement> ] .
+
+#------- Ressource Annonce
+<#Annonce>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+            # ------ we use JSONPath to read json file
+            rml:referenceFormulation ql:JSONPath ;
+            # ------ the path to the file containing annonces
+            rml:source "depot-des-comptes-de-societes.json" ] ;
+
+            # ------ Defining the type of the subject
+            rr:subjectMap [ rr:class <http://data.europa.eu/eli/ontology#LegalResource> ;
+            #http://dbpedia.org/ontology/WrittenWork
+            # ------ Defining the URI of the subject
+            rr:template "http://ods.dataset.com/Annonce/{numeroannonce}" ] ;
+
+    # ------ Definition of each Predicate-Object associated with the Annonce subject
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.numeroannonce" ] ;
+            # ------ URI predicate
+            rr:predicate rdfs:label ;
+            rr:predicate <http://data.europa.eu/eli/ontology#number>],
+                         # ------ JSONPath expression to access the value
+        [ rr:objectMap [ rml:reference "$.typeannonce" ] ;
+            rr:predicate <http://data.europa.eu/eli/ontology#type_document> ],
+        [ rr:objectMap [ rml:reference "$.nojo" ] ;
+            rr:predicate <http://data.europa.eu/eli/ontology#number> ],
+
+                        #référence à Tribunal
+        [ rr:objectMap [ rr:parentTriplesMap <#Tribunal> ] ;
+            rr:predicate <http://data.europa.eu/eli/ontology#publisher> ].

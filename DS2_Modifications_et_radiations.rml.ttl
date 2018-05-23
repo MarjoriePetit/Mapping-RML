@@ -1,0 +1,171 @@
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# bin/RML-Mapper -tm AdresseEtranger -m DS2_Modifications_et_radiations.rml.ttl -o DS2_Modifications_et_radiations.ttl
+
+
+#------- Ressource PersonneMorale
+<#PersonneMorale>   rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                    rml:referenceFormulation ql:JSONPath ;
+                    rml:source "modifications-et-radiations-detablissements-au-registre-du-commerce-et-des-socie.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Company> ; #On defini le type du sujet
+            rr:template "http://ods.dataset.com/PersonneMorale/{personnes_personne_personnemorale_denomination}" ] ; #puis son URI
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_denomination" ] ; #On defini les pptés
+                            rr:predicate rdfs:label ;
+                            rr:predicate <http://dbpedia.org/ontology/name>] ,
+                          [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_formejuridique" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/legalForm> ] ,
+                          [ rr:objectMap [ rml:reference "$.radiationaurcs_radiationpm" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/ban_from_RCS_bool> ] ,
+                          [ rr:objectMap [ rml:reference "$.personnes_personne_capital" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/capital_money> ] ,
+
+                                          #référence à Annonce
+                          [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
+                              rr:predicate <http://dbpedia.org/ontology/related> ].
+
+
+#------- Ressource AdresseEtranger
+<#AdresseEtranger>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                    rml:referenceFormulation ql:JSONPath ;
+                    rml:source "modifications-et-radiations-detablissements-au-registre-du-commerce-et-des-socie.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Place> ;
+            rr:template "http://ods.dataset.com/AdresseEtranger/{personnes_personne_adresse_etranger_adresse}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_etranger_adresse" ] ;
+                            rr:predicate rdfs:label ;
+                            rr:predicate <http://dbpedia.org/ontology/address>] ,
+                          [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_etranger_pays" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/country> ] .
+
+#Pour definir l'URI, comment faire ?
+#Template pour ODS : id du dataset/classe de la ressource/id(clef primaire)
+#Regarder pour récup les URI du bodacc si elles existent puis jouer avec les "same as"
+
+#------- Ressource AdresseFrance
+<#AdresseFrance>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                  rml:referenceFormulation ql:JSONPath ;
+                  rml:source "modifications-et-radiations-detablissements-au-registre-du-commerce-et-des-socie.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Place> ;
+            rr:template "http://ods.dataset.com/AdresseFrance/{adresse}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.adresse" ] ;
+            rr:predicate rdfs:label ;
+            rr:predicate <http://dbpedia.org/ontology/address>],
+
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_numerovoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/street-number> ],
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_typevoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/route> ],
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_nomvoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/street-name> ],
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_complgeographique" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/information> ],
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_bp" ] ;
+                  rr:predicate <http://schema.org/postOfficeBoxNumber> ],
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_localite" ] ;       #Localité à revoir ?
+                  rr:predicate <http://dbpedia.org/ontology/information> ],
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_codepostal" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/postalCode> ],
+            [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_ville" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/city> ] .
+
+
+#------- Ressource PersonPhysique
+<#PersonPhysique> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+            # ------ we use JSONPath to read json file
+            rml:referenceFormulation ql:JSONPath ;
+            # ------ the path to the file containing Persons
+            rml:source "modifications-et-radiations-detablissements-au-registre-du-commerce-et-des-socie.json" ] ;
+
+            # ------ Defining the type of the subject
+            rr:subjectMap [ rr:class <http://xmlns.com/foaf/0.1/Person> ;
+            # ------ Defining the URI of the subject
+                  rr:template "http://ods.dataset.com/PersonPhysique/{personnes_personne_personnephysique_nom}_{personnes_personne_personnephysique_prenom}" ] ;
+
+    # ------ Definition of each Predicate-Object associated with the Person subject
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_nom" ] ;
+            # ------ URI predicate
+            rr:predicate rdfs:label ;
+            rr:predicate <http://xmlns.com/foaf/0.1/family_name>],
+                         # ------ JSONPath expression to access the value
+        [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_prenom" ] ;
+              rr:predicate <http://xmlns.com/foaf/0.1/lastName> ],
+        [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_nomusage" ] ;
+              rr:predicate <http://xmlns.com/foaf/0.1/name> ],
+        [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_pseudonyme" ] ;
+              rr:predicate <http://xmlns.com/foaf/0.1/nick> ],
+        [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_nomcommercial" ] ;
+              rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/business_name> ],
+        [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_nationnalite" ] ;
+              rr:predicate <http://dbpedia.org/ontology/nationality> ],
+        [ rr:objectMap [ rml:reference "$.radiationaurcs_radiationpp_datecessationactivitepp" ] ;
+              rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/ban_from_RCS_date> ],
+
+                        #référence à Annonce
+          [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
+              rr:predicate <http://dbpedia.org/ontology/related> ],
+
+                        #référence à AdresseFrance
+          [ rr:objectMap [ rr:parentTriplesMap <#AdresseFrance> ] ;
+              rr:predicate <http://dbpedia.org/ontology/residence> ],
+
+                        #référence à AdresseEtranger
+          [ rr:objectMap [ rr:parentTriplesMap <#AdresseEtranger> ] ;
+              rr:predicate <http://dbpedia.org/ontology/residence> ] .
+
+#------- Ressource Tribunal
+<#Tribunal> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+            rml:referenceFormulation ql:JSONPath ;
+            rml:source "modifications-et-radiations-detablissements-au-registre-du-commerce-et-des-socie.json" ] ;
+
+    rr:subjectMap [ rr:class <http://data.lirmm.fr/ontologies/osp#Tribunal> ;
+            rr:template "http://ods.dataset.com/Tribunal/{tribunal}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.tribunal" ] ;
+            rr:predicate rdfs:label ;
+            rr:predicate <http://data.lirmm.fr/ontologies/osp#typeTribunal> ],
+
+    ########################################################## ou juste dbo:name ???
+
+
+        [ rr:objectMap [ rml:reference "$.numerodepartement" ] ;
+            rr:predicate <http://data.lirmm.fr/ontologies/osp#aArrondissement> ] .
+
+#------- Ressource Annonce
+<#Annonce>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+            # ------ we use JSONPath to read json file
+            rml:referenceFormulation ql:JSONPath ;
+            # ------ the path to the file containing annonces
+            rml:source "modifications-et-radiations-detablissements-au-registre-du-commerce-et-des-socie.json" ] ;
+
+            # ------ Defining the type of the subject
+            rr:subjectMap [ rr:class <http://data.europa.eu/eli/ontology#LegalResource> ;
+            #http://dbpedia.org/ontology/WrittenWork
+            # ------ Defining the URI of the subject
+            rr:template "http://ods.dataset.com/Annonce/{numeroannonce}" ] ;
+
+    # ------ Definition of each Predicate-Object associated with the Annonce subject
+            rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.numeroannonce" ] ;
+            # ------ URI predicate
+            rr:predicate rdfs:label ;
+            rr:predicate <http://data.europa.eu/eli/ontology#number>],
+                         # ------ JSONPath expression to access the value
+        [ rr:objectMap [ rml:reference "$.typeannonce" ] ;
+            rr:predicate <http://data.europa.eu/eli/ontology#type_document> ],
+        [ rr:objectMap [ rml:reference "$.nojo" ] ;
+            rr:predicate <http://data.europa.eu/eli/ontology#number> ],
+
+                        #référence à Tribunal
+        [ rr:objectMap [ rr:parentTriplesMap <#Tribunal> ] ;
+            rr:predicate <http://data.europa.eu/eli/ontology#publisher_agent> ].
+            #range : eli:Agent ça marche ?? ok
