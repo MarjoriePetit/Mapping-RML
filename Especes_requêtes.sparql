@@ -1,15 +1,96 @@
-SELECT ?nom_cite ?photo {
-?s foaf:name ?nom_cite
-?s foaf:depiction ?photo
-?s dbo:kingdom dbr:Plant
+PREFIX schema: <http://schema.org/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX wlo: <http://purl.org/ontology/wo/>
+PREFIX dcmi: <http://purl.org/dc/terms/>
+PREFIX eli: <http://data.europa.eu/eli/ontology#>
+
+
+
+#pour le dataset1 reférentiel
+SELECT ?cd_nom ?nom_cite ?ConservationStatus ?syn_cite ?precisions ?cd_nom_cite WHERE {
+?s schema:identifier ?cd_nom .
+?s foaf:name ?nom_cite .
+?s wlo:conservationStatus ?cs .
+?cs schema:identifier ?ConservationStatus .
+OPTIONAL { ?s dbo:synonym ?syn_cite } .
+OPTIONAL { ?s wlo:shortDescription ?precisions } .
+?s schema:identifier ?cd_nom_cite
 }
 
-SELECT ?nom_cite ?photo ?annee {
-?s foaf:name ?nom_cite
-?s foaf:depiction ?photo
-?s dbo:kingdom dbr:Plant
-?s cd_protection ?cd_p
-?s2 cd_protection ?cd_p
-?s2 wlo:yearAssessed ?annee
+#pour le dataset2
+SELECT ?cd_protection ?intitule ?article ?url_inpn ?date_arrete ?cd_doc ?arrete ?url ?type WHERE {
+?s schema:identifier ?cd_protection .
+?s wlo:threatDescription ?intitule .
+OPTIONAL { ?s dcmi:isReferencedBy ?article } .
+?s wlo:populationTrend ?url_inpn .
+?s wlo:yearAssessed ?date_arrete .
+?s dbo:related ?LegalResource .
+?LegalResource eli:number ?cd_doc .
+?LegalResource eli:description ?arrete .
+OPTIONAL { ?LegalResource schema:url ?url } .
+?s wlo:shortDescription ?type
 }
 
+
+#Pour dbpédia
+SELECT ?s ?nom ?photo WHERE {
+?s foaf:name ?nom .
+?s foaf:depiction ?photo .
+?s dbo:kingdom dbr:Plant 
+}
+
+#pour dbpedia et reférentiel
+SELECT ?cd_nom ?nom_cite ?ConservationStatus ?syn_cite ?precisions ?cd_nom_cite ?photo WHERE {
+?s schema:identifier ?cd_nom .
+?s foaf:name ?nom_cite .
+?s wlo:conservationStatus ?cs .
+?cs schema:identifier ?ConservationStatus .
+OPTIONAL { ?s dbo:synonym ?syn_cite } .
+OPTIONAL { ?s wlo:shortDescription ?precisions } .
+?s schema:identifier ?cd_nom_cite .
+?s foaf:depiction ?photo .
+?s dbo:kingdom dbr:Plant 
+}
+
+#pour les 3
+SELECT ?cd_nom ?nom_cite ?ConservationStatus ?syn_cite ?precisions ?cd_nom_cite ?photo ?intitule ?article ?url_inpn ?date_arrete ?cd_doc ?arrete ?url ?type WHERE {
+?s schema:identifier ?cd_nom .
+?s foaf:name ?nom_cite .
+?s wlo:conservationStatus ?cs .
+?cs schema:identifier ?ConservationStatus .
+OPTIONAL { ?s dbo:synonym ?syn_cite } .
+OPTIONAL { ?s wlo:shortDescription ?precisions } .
+?s schema:identifier ?cd_nom_cite .
+?s foaf:depiction ?photo .
+?s dbo:kingdom dbr:Plant .
+?s2 schema:identifier ?ConservationStatus .
+?s2 wlo:threatDescription ?intitule .
+OPTIONAL { ?s2 dcmi:isReferencedBy ?article } .
+?s2 wlo:populationTrend ?url_inpn .
+?s2 wlo:yearAssessed ?date_arrete .
+?s2 dbo:related ?LegalResource .
+?LegalResource eli:number ?cd_doc .
+?LegalResource eli:description ?arrete .
+OPTIONAL { ?LegalResource schema:url ?url } .
+?s2 wlo:shortDescription ?type
+}
+
+
+SELECT ?nom_cite ?ConservationStatus ?precisions  ?photo ?intitule ?article ?url_inpn ?date_arrete ?arrete ?type WHERE {
+?s foaf:name ?nom_cite .
+?s wlo:conservationStatus ?cs .
+?cs schema:identifier ?ConservationStatus .
+OPTIONAL { ?s wlo:shortDescription ?precisions } .
+?s foaf:depiction ?photo .
+?s dbo:kingdom dbr:Plant .
+?s2 schema:identifier ?ConservationStatus .
+?s2 wlo:threatDescription ?intitule .
+OPTIONAL { ?s2 dcmi:isReferencedBy ?article } .
+?s2 wlo:populationTrend ?url_inpn .
+?s2 wlo:yearAssessed ?date_arrete .
+?s2 dbo:related ?LegalResource .
+?LegalResource eli:description ?arrete .
+?s2 wlo:shortDescription ?type
+}
