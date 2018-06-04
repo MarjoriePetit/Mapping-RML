@@ -1,0 +1,90 @@
+#On a creé une URI propre au projet
+@prefix : <http://dbpedia.org/ontology-ext/ods/bodacc/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dbo: <http://dbpedia.org/ontology/>
+
+#mieux d'utiliser http://schema.org/postOfficeBoxNumber
+:post-office-box a owl:DatatypeProperty ;
+    rdfs:label "Postal Office Box"@en ;
+    rdfs:label "Boite Postale"@fr ;
+    rdfs:comment "Postal Office Box of a person or a company"@en ;
+    rdfs:comment "Boite postale d'une personne ou d'une entreprise"@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dbo:Place ;
+    rdfs:range xsd:string .
+
+:street-name a owl:DatatypeProperty ;
+    rdfs:label "Street Name"@en ;
+    rdfs:label "Nom de la voie"@fr ;
+    rdfs:comment "Route name, a route can be a street, a way, a road ..."@en ;
+    rdfs:comment "Nom d'une voie, une voie peut être une rue, un chemin, une impasse ..."@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dbo:Place ;
+    rdfs:range xsd:string .
+
+:street-number a owl:DatatypeProperty ;
+    rdfs:label "Street Number"@en ;
+    rdfs:label "Numero de la voie"@fr ;
+    rdfs:comment "A building number on the street, a building can be a house, a company ..."@en ;
+    rdfs:comment "Numéro d'un bâtiment de la voie, un batiment peut être une maison, un immeuble, une société ..."@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dbo:Place ;
+    rdfs:range xsd:string .
+
+ :ban_from_RCS_bool a owl:DatatypeProperty ;
+    rdfs:label "Ban from the RCS"@en ;
+    rdfs:label "Radiation au RCS"@fr ;
+    rdfs:comment "Ban the company from the Registre du Commerce et des Sociétés (RCS) in France (Boolean)"@en ;
+    rdfs:comment "Radiation de l'entreprise au Registre du Commerce et des Sociétés (RCS) (Booleen : O/N)"@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dbo:Company ;
+    rdfs:range xsd:string .
+
+ :ban_from_RCS_date a owl:DatatypeProperty ;
+    rdfs:label "date of the RCS ban"@en ;
+    rdfs:label "Date de radiation au RCS"@fr ;
+    rdfs:comment "Date of the ban from the Registre du Commerce et des Sociétés (RCS) in France. For a physical person who has a small business (a shopkeeper or a farmer ... not a moral person)"@en ;
+    rdfs:comment "Date de radiation au Registre du Commerce et des Sociétés (RCS). Pour une personne physique qui possède un commerce (boutique, agriculteur ... pas une personne physique)"@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dbo:Person ;
+    rdfs:range xsd:date .
+
+ :RCS_number a owl:DatatypeProperty ;
+    rdfs:label "RCS number"@en ;
+    rdfs:label "Numéro RCS"@fr ;
+    rdfs:comment "Number identification on Registre du Commerce et des Sociétés (RCS) in France."@en ;
+    rdfs:comment "Numéro d'identification au Registre du Commerce et des Sociétés (RCS)."@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dpo:Agent ;
+    rdfs:range xsd:decimal .
+
+ :RCS_code a owl:DatatypeProperty ;
+    rdfs:label "RCS code"@en ;
+    rdfs:label "Code RCS"@fr ;
+    rdfs:comment "Code of Registre du Commerce et des Sociétés (RCS) in France. It's 'RCS', 'RM', 'RSEIRL' or 'RSAC'."@en ;
+    rdfs:comment "Numéro d'identification au Registre du Commerce et des Sociétés (RCS).C'est 'RCS', 'RM', 'RSEIRL' ou 'RSAC'."@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dpo:Agent ;
+    rdfs:range xsd:string .
+
+ :capital_money a owl:DatatypeProperty ;
+    rdfs:label "Compagny capital"@en ;
+    rdfs:label "Capital d'une entreprise"@fr ;
+    rdfs:comment "Capital amount of a company (without currency)"@en ;
+    rdfs:comment "Somme du capital d'une entreprise (sans la devise)"@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dbo:Company ;
+    rdfs:range xsd:decimal .
+
+ :business_name a owl:DatatypeProperty ;
+    rdfs:label "business name"@en ;
+    rdfs:label "Nom commercial"@fr ;
+    rdfs:comment "Business name of a physical or moral personne"@en ;
+    rdfs:comment "Nom commercial d'une personne physique ou morale"@fr ;
+    rdfs:isDefinedBy <http://dbpedia.org/ontology-ext/ods/bodacc/>  ;
+    rdfs:domain dbo:Person , dbo:Company ;
+    rdfs:range xsd:string .
