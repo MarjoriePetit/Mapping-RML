@@ -1,5 +1,3 @@
-DS1_Immatriculations.rml.ttl
-
 @prefix ql: <http://semweb.mmlab.be/ns/ql#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -8,90 +6,261 @@ DS1_Immatriculations.rml.ttl
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-# bin/RML-Mapper -m DS4_Procedures_collectives.rml.ttl -o DS4_Procedures_collectives.ttl
+# bin/RML-Mapper -m DS1_Immatriculations.rml.ttl -o DS1_Immatriculations.ttl
 
 
-#------- Ressource Jugement
-<#Jugement> rml:logicalSource [ rml:iterator "$.[*].fields" ;
-            rml:referenceFormulation ql:JSONPath ;
-            rml:source "procedures-collectives.json" ] ;
 
-        rr:subjectMap [ rr:class <http://purl.org/ontology/bibo/LegalDecision> ;
-            rr:template "http://ods.dataset.com/Jugement/{jugement_date}_{jugement_complementjugement}" ] ;
 
-        rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.jugement_date" ] ;
-            rr:predicate <http://purl.org/ontology/bibo/argued>],
-            [ rr:objectMap [ rml:reference "$.jugement_famille" ] ;
-              rr:predicate <http://schema.org/name> ],
-        # http://dbpedia.org/ontology/ruling
-        # http://purl.org/dc/elements/1.1/subject
-        #http://purl.org/dc/terms/title
+#------- Ressource PrecedentProprietairePM
+<#PrecedentProprietairePM>   rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                             rml:referenceFormulation ql:JSONPath ;
+                             rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
-            [ rr:objectMap [ rml:reference "$.jugement_nature" ] ;
-              rr:predicate <http://schema.org/description> ],
-            [ rr:objectMap [ rml:reference "$.jugement_complementjugement" ] ;
-              rr:predicate <http://purl.org/dc/terms/abstract> ],
-              # http://purl.org/ontology/bibo/affirmedBy
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Agent> ;
+            rr:template "http://ods.dataset.com/PrecedentProprietairePM/{precedentproprietairepm_denomination}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.precedentproprietairepm_denomination" ] ;
+                            rr:predicate rdfs:label ;
+                            rr:predicate <http://dbpedia.org/ontology/name>] ,
+                          [ rr:objectMap [ rml:reference "$.precedentproprietairepm_noninscrit" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/notes> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedentproprietairepm_numeroimmatriculation_numeroidentification" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_number> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedentproprietairepm_numeroimmatriculation_codercs" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_code> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedentproprietairepm_numeroimmatriculation_nomgreffeimmat" ] ;
+                            rr:predicate <http://purl.org/ontology/bibo/court> ] .
+
+
+#------- Ressource PrecedentProprietairePP        Revoir nature !!
+<#PrecedentProprietairePP>   rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                             rml:referenceFormulation ql:JSONPath ;
+                             rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Person> ;
+                    # http://xmlns.com/foaf/0.1/Person ?
+            rr:template "http://ods.dataset.com/PrecedentProprietairePP/{precedent_proprietairepp_nom}_{precedent_proprietairepp_prenom}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.precedent_proprietairepp_nom" ] ;
+                            rr:predicate <http://xmlns.com/foaf/0.1/family_name> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedent_proprietairepp_prenom" ] ;
+                            rr:predicate <http://xmlns.com/foaf/0.1/lastName> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedent_proprietairepp_nomusage" ] ;
+                            rr:predicate <http://xmlns.com/foaf/0.1/name> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedent_proprietairepp_noninscrit" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/notes> ] ,
+
+                          # Colonne vide, je ne sais pas ce que c'est la nature ... la fonction de la personne ??
+                          # [ rr:objectMap [ rml:reference "$.precedent_proprietairepp_nature" ] ;
+                          #   rr:predicate <http://dbpedia.org/ontology/otherFunction>] ,
+
+                          [ rr:objectMap [ rml:reference "$.precedent_proprietairepp_numeroimmatriculation_numeroidentification" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_number> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedent_proprietairepp_numeroimmatriculation_codercs" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_code> ] ,
+                          [ rr:objectMap [ rml:reference "$precedent_proprietairepp_numeroimmatriculation_nomgreffeimmat" ] ;
+                            rr:predicate <http://purl.org/ontology/bibo/court> ] .
+
+
+#------- Ressource PrecedentExploitantPM
+<#PrecedentExploitantPM>   rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                             rml:referenceFormulation ql:JSONPath ;
+                             rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Agent> ;
+            rr:template "http://ods.dataset.com/PrecedentExploitantPM/{precedentexploitantpm_denomination}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.precedentexploitantpm_denomination" ] ;
+                            rr:predicate rdfs:label ;
+                            rr:predicate <http://dbpedia.org/ontology/name>] ,
+                          [ rr:objectMap [ rml:reference "$.precedentexploitantpm_noninscrit" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/notes> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedentexploitantpm_numeroimmatriculation_numeroidentification" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_number> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedentexploitantpm_numeroimmatriculation_codercs" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_code> ] ,
+                          [ rr:objectMap [ rml:reference "$.precedentexploitantpm_numeroimmatriculation_nomgreffeimmat" ] ;
+                            rr:predicate <http://purl.org/ontology/bibo/court> ] .
+
+
+#------- Ressource Vente
+<#Vente> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+         rml:referenceFormulation ql:JSONPath ;
+         rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
+
+        rr:subjectMap [ rr:class <http://purl.org/ontology/bibo/LegalDocument> ;
+            rr:template "http://ods.dataset.com/Vente/{acte_vente_categorievente}_{acte_vente_datecommencementactivite}_{acte_vente_descriptif}" ] ;
+
+        rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.acte_vente_dateimmatriculation" ] ;
+              rr:predicate <http://purl.org/dc/terms/issued> ],
+            [ rr:objectMap [ rml:reference "$.acte_vente_categorievente" ] ;
+              rr:predicate <http://dbpedia.org/ontology/category> ],
+            [ rr:objectMap [ rml:reference "$.acte_vente_dateeffet" ] ;
+              rr:predicate <http://purl.org/dc/terms/date> ],
+            [ rr:objectMap [ rml:reference "$.acte_vente_datecommencementactivite" ] ;
+              rr:predicate <http://purl.org/cerif/frapo/hasStartDate> ],
+            [ rr:objectMap [ rml:reference "$.acte_vente_opposition" ] ;
+              rr:predicate <http://purl.org/spar/cito/disagreesWith> ],
+            [ rr:objectMap [ rml:reference "$.acte_vente_declarationcreance" ] ;
+              rr:predicate <http://purl.org/ontology/bibo/court> ],
+            [ rr:objectMap [ rml:reference "$.acte_vente_descriptif" ] ;
+              rr:predicate <http://purl.org/dc/terms/description> ],
+
+              #référence à JournalVente
+            [ rr:objectMap [ rr:parentTriplesMap <#JournalVente> ] ;
+              rr:predicate <http://dbpedia.org/ontology/related> ],
+              # http://dbpedia.org/ontology/newspaper
 
               #référence à Annonce
             [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
-              rr:predicate <http://dbpedia.org/ontology/related> ],
-
-              #référence à Client
-            [ rr:objectMap [ rr:parentTriplesMap <#Client> ] ;
               rr:predicate <http://dbpedia.org/ontology/related> ].
 
-#------- Ressource Client
+
+#------- Ressource JournalVente
+<#JournalVente> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+         rml:referenceFormulation ql:JSONPath ;
+         rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
+
+        rr:subjectMap [ rr:class <http://purl.org/spar/fabio/Newspaper> ;
+        # http://dbpedia.org/ontology/Newspaper
+            rr:template "http://ods.dataset.com/JournalVente/{acte_vente_journal_date}_{acte_vente_journal_titre}" ] ;
+
+        rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.acte_vente_journal_date" ] ;
+              rr:predicate <http://purl.org/dc/terms/date>],
+            [ rr:objectMap [ rml:reference "$.acte_vente_journal_titre" ] ;
+              rr:predicate <http://purl.org/dc/terms/title> ].
+
+
+#------- Ressource Creation
+<#Creation> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                   rml:referenceFormulation ql:JSONPath ;
+                   rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
+
+        rr:subjectMap [ rr:class <http://purl.org/ontology/bibo/LegalDocument> ;
+            rr:template "http://ods.dataset.com/Creation/{acte_creation_dateimmatriculation}_{acte_creation_datecommencementactivite}_{acte_creation_categoriecreation}" ] ;
+
+        rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.acte_creation_dateimmatriculation" ] ;
+              rr:predicate <http://purl.org/dc/terms/issued> ],
+            [ rr:objectMap [ rml:reference "$.acte_creation_categoriecreation" ] ;
+              rr:predicate <http://dbpedia.org/ontology/category> ],
+            [ rr:objectMap [ rml:reference "$.acte_creation_datecommencementactivite" ] ;
+              rr:predicate <http://purl.org/cerif/frapo/hasStartDate> ],
+            [ rr:objectMap [ rml:reference "$.acte_creation_descriptif" ] ;
+              rr:predicate <http://purl.org/dc/terms/description> ],
+
+              #référence à Annonce
+            [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
+              rr:predicate <http://dbpedia.org/ontology/related> ].
+
+
+#------- Ressource Immatriculation
+<#Immatriculation> rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                   rml:referenceFormulation ql:JSONPath ;
+                   rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
+
+            rr:subjectMap [ rr:class <http://purl.org/ontology/bibo/LegalDocument> ;
+            # http://rhizomik.net/ontologies/copyrightonto.owl#OfficialActRight
+                rr:template "http://ods.dataset.com/Immatriculation/{acte_immatriculation_dateimmatriculation}_{acte_immatriculation_datecommencementactivite}_{acte_immatriculation_descriptif}" ] ;
+
+            rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.acte_immatriculation_dateimmatriculation" ] ;
+                  rr:predicate <http://purl.org/dc/terms/issued> ],
+                [ rr:objectMap [ rml:reference "$.acte_immatriculation_categorieimmatriculation" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/category>],
+                [ rr:objectMap [ rml:reference "$.acte_immatriculation_dateeffet" ] ;
+                  rr:predicate <http://purl.org/dc/terms/date> ],
+                [ rr:objectMap [ rml:reference "$.acte_immatriculation_datecommencementactivite" ] ;
+                  rr:predicate <http://purl.org/cerif/frapo/hasStartDate> ],
+                [ rr:objectMap [ rml:reference "$.acte_immatriculation_descriptif" ] ;
+                  rr:predicate <http://purl.org/dc/terms/description> ],
+
+                    #référence à Annonce
+                [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
+                  rr:predicate <http://dbpedia.org/ontology/related> ].
+
+
+#------- Ressource AdresseEtablissement
+<#AdresseEtablissement>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
+                         rml:referenceFormulation ql:JSONPath ;
+                         rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
+
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Place> ;
+            rr:template "http://ods.dataset.com/AdresseEtablissement/{etablissement_adresse_numerovoie}_{etablissement_adresse_nomvoie}_{etablissement_adresse_codepostal}" ] ;
+
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.etablissement_adresse_numerovoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/street-number> ],
+            [ rr:objectMap [ rml:reference "$.etablissement_adresse_typevoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/route> ],
+            [ rr:objectMap [ rml:reference "$.etablissement_adresse_nomvoie" ] ;
+                  rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/street-name> ],
+            [ rr:objectMap [ rml:reference "$.etablissement_adresse_complgeographique" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/information> ],
+            [ rr:objectMap [ rml:reference "$.etablissement_adresse_bp" ] ;
+                  rr:predicate <http://schema.org/postOfficeBoxNumber> ],
+            [ rr:objectMap [ rml:reference "$.etablissement_adresse_localite" ] ;       #Localité à revoir ?
+                  rr:predicate <http://dbpedia.org/ontology/information> ],
+            [ rr:objectMap [ rml:reference "$.etablissement_adresse_codepostal" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/postalCode> ],
+            [ rr:objectMap [ rml:reference "$.etablissement_adresse_ville" ] ;
+                  rr:predicate <http://dbpedia.org/ontology/city> ].
+
+
+#------- Ressource Etablissement
 <#Etablissement> rml:logicalSource [ rml:iterator "$.[*].fields" ;
-          rml:referenceFormulation ql:JSONPath ;
-          rml:source "procedures-collectives.json" ] ;
+                 rml:referenceFormulation ql:JSONPath ;
+                 rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
           rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Agent> ; #Agent = person et company dc cohérent
               rr:template "http://ods.dataset.com/Etablissement/{etablissement_originefonds}_{etablissement_qualiteetablissement}_{etablissement_activite}" ] ;
 
           rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.etablissement_originefonds" ] ;
-              rr:predicate <http://schema.org/identifier>],
+              rr:predicate <http://purl.org/cerif/frapo/hasProvenance>],
               [ rr:objectMap [ rml:reference "$.etablissement_qualiteetablissement" ] ;
-                rr:predicate <http://dbpedia.org/ontology/discipline> ],
+                rr:predicate <http://purl.org/cerif/frapo/hasAgentInformation> ],
               [ rr:objectMap [ rml:reference "$.etablissement_activite" ] ;
-                rr:predicate <http://dbpedia.org/ontology/notes> ],
+                rr:predicate <http://dbpedia.org/ontology/discipline> ],
+              [ rr:objectMap [ rml:reference "$.etablissement_enseigne" ] ;
+                rr:predicate <http://dbpedia.org/ontology/name> ],
 
-                          #référence à PersonneMorale
+                          # référence à PrecedentExploitantPM
+            [ rr:objectMap [ rr:parentTriplesMap <#PrecedentExploitantPM> ] ;
+                rr:predicate <http://dbpedia.org/ontology/firstOwner> ],
+
+                          # référence à PrecedentProprietairePM
+            [ rr:objectMap [ rr:parentTriplesMap <#PrecedentProprietairePM> ] ;
+                rr:predicate <http://dbpedia.org/ontology/firstOwner> ],
+
+                          # référence à PrecedentProprietairePP
+            [ rr:objectMap [ rr:parentTriplesMap <#PrecedentProprietairePP> ] ;
+                rr:predicate <http://dbpedia.org/ontology/firstOwner> ],
+
+                          # référence à PersonneMorale
             [ rr:objectMap [ rr:parentTriplesMap <#PersonneMorale> ] ;
                 rr:predicate <http://dbpedia.org/ontology/owningCompany> ],
 
-                          #référence à PersonPhysique
+                          # référence à PersonPhysique
             [ rr:objectMap [ rr:parentTriplesMap <#PersonPhysique> ] ;
                 rr:predicate <http://dbpedia.org/ontology/owner> ],
 
-
-                          #référence à Annonce
+                          # référence à Annonce
             [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
                 rr:predicate <http://dbpedia.org/ontology/related> ],
 
-                          #référence à AdresseEtablissement
+                          # référence à AdresseEtablissement
             [ rr:objectMap [ rr:parentTriplesMap <#AdresseEtablissement> ] ;
                 rr:predicate <http://dbpedia.org/ontology/location> ] .
 
 
 #------- Ressource PersonPhysique
 <#PersonPhysique> rml:logicalSource [ rml:iterator "$.[*].fields" ;
-            # ------ we use JSONPath to read json file
             rml:referenceFormulation ql:JSONPath ;
-            # ------ the path to the file containing Persons
-            rml:source "procedures-collectives.json" ] ;
+            rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
-            # ------ Defining the type of the subject
             rr:subjectMap [ rr:class <http://xmlns.com/foaf/0.1/Person> ;
-            # ------ Defining the URI of the subject
                   rr:template "http://ods.dataset.com/PersonPhysique/{personnes_personne_personnephysique_nom}_{personnes_personne_personnephysique_prenom}" ] ;
 
-    # ------ Definition of each Predicate-Object associated with the Person subject
     rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_nom" ] ;
-            # ------ URI predicate
             rr:predicate rdfs:label ;
             rr:predicate <http://xmlns.com/foaf/0.1/family_name>],
-                         # ------ JSONPath expression to access the value
         [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_prenom" ] ;
               rr:predicate <http://xmlns.com/foaf/0.1/lastName> ],
         [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_nomusage" ] ;
@@ -103,8 +272,6 @@ DS1_Immatriculations.rml.ttl
         [ rr:objectMap [ rml:reference "$.personnes_personne_personnephysique_nationnalite" ] ;
               rr:predicate <http://dbpedia.org/ontology/nationality> ] .
 
-                      #référence à Etablissement
-
                       #référence à Annonce
         [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
               rr:predicate <http://dbpedia.org/ontology/related> ].
@@ -114,12 +281,12 @@ DS1_Immatriculations.rml.ttl
 #------- Ressource PersonneMorale
 <#PersonneMorale>   rml:logicalSource [ rml:iterator "$.[*].fields" ;
                     rml:referenceFormulation ql:JSONPath ;
-                    rml:source "procedures-collectives.json" ] ;
+                    rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
-    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Company> ; #On defini le type du sujet
-            rr:template "http://ods.dataset.com/PersonneMorale/{personnes_personne_personnemorale_denomination}" ] ; #puis son URI
+    rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Company> ;
+            rr:template "http://ods.dataset.com/PersonneMorale/{personnes_personne_personnemorale_denomination}" ] ;
 
-    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_denomination" ] ; #On defini les pptés
+    rr:predicateObjectMap [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_denomination" ] ;
                             rr:predicate rdfs:label ;
                             rr:predicate <http://dbpedia.org/ontology/name>] ,
                           [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_formejuridique" ] ;
@@ -127,15 +294,17 @@ DS1_Immatriculations.rml.ttl
                           [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_nomcommercial" ] ;
                             rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/business_name> ],
                           [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_administration" ] ;
-                            rr:predicate <http://schema.org/description> ], #Administration à revoir ?
+                            rr:predicate <http://schema.org/description> ],
                           [ rr:objectMap [ rml:reference "$.personnes_personne_personnemorale_sigle" ] ;
                             rr:predicate <http://data.lirmm.fr/ontologies/osp#aInitiales> ] ,
 
-                            # montantcapital
-                            #devise
-                            #capitalvariable
-
-                                  #référence à Etablissement
+                          [ rr:objectMap [ rml:reference "$.personnes_personne_capital_montantcapital" ] ;
+                            rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/capital_money> ],
+                          [ rr:objectMap [ rml:reference "$.personnes_personne_capital_devise" ] ;
+                            rr:predicate <http://purl.org/cerif/frapo/hasCurrencyCode> ],
+                          [ rr:objectMap [ rml:reference "$.personnes_personne_capital_capitalvariable" ] ;
+                            rr:predicate <http://dbpedia.org/ontology/marketCapitalisation> ] ,
+                            #http://purl.org/cerif/frapo/hasMonetaryValue
 
                                   #référence à Annonce
                     [ rr:objectMap [ rr:parentTriplesMap <#Annonce> ] ;
@@ -149,18 +318,11 @@ DS1_Immatriculations.rml.ttl
                     [ rr:objectMap [ rr:parentTriplesMap <#AdresseEtranger> ] ;
                         rr:predicate <http://dbpedia.org/ontology/location> ] .
 
-                          # [ rr:objectMap [ rml:reference "$.numeroimmatriculation_numeroidentificationrcs" ] ;
-                          #   rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_number> ] ,
-                          # [ rr:objectMap [ rml:reference "$.numeroimmatriculation_codercs" ] ;
-                          #   rr:predicate <http://dbpedia.org/ontology-ext/ods/bodacc/RCS_code> ] ,
-                          # [ rr:objectMap [ rml:reference "$.numeroimmatriculation_nomgreffeimmat" ] ;
-                          #   rr:predicate <http://purl.org/ontology/bibo/court> ] .
 
-
-#------- Ressource AdresseEtranger OK
+#------- Ressource AdresseEtranger
 <#AdresseEtranger>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
                     rml:referenceFormulation ql:JSONPath ;
-                    rml:source "procedures-collectives.json" ] ;
+                    rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
     rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Place> ;
             rr:template "http://ods.dataset.com/AdresseEtranger/{personnes_personne_adresse_etranger}" ] ;
@@ -172,10 +334,10 @@ DS1_Immatriculations.rml.ttl
                             rr:predicate <http://dbpedia.org/ontology/country> ] .
 
 
-#------- Ressource AdresseFrance OK
+#------- Ressource AdresseFrance
 <#AdresseFrance>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
                   rml:referenceFormulation ql:JSONPath ;
-                  rml:source "procedures-collectives.json" ] ;
+                  rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
     rr:subjectMap [ rr:class <http://dbpedia.org/ontology/Place> ;
             rr:template "http://ods.dataset.com/AdresseFrance/{personnes_personne_adresse_france_numerovoie}_{personnes_personne_adresse_france_nomvoie}_{personnes_personne_adresse_france_codepostal}" ] ;
@@ -197,10 +359,10 @@ DS1_Immatriculations.rml.ttl
             [ rr:objectMap [ rml:reference "$.personnes_personne_adresse_france_ville" ] ;
                   rr:predicate <http://dbpedia.org/ontology/city> ].
 
-#------- Ressource Tribunal OK
+#------- Ressource Tribunal
 <#Tribunal> rml:logicalSource [ rml:iterator "$.[*].fields" ;
             rml:referenceFormulation ql:JSONPath ;
-            rml:source "procedures-collectives.json" ] ;
+            rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
     rr:subjectMap [ rr:class <http://data.lirmm.fr/ontologies/osp#Tribunal> ;
             rr:template "http://ods.dataset.com/Tribunal/{tribunal}" ] ;
@@ -211,10 +373,10 @@ DS1_Immatriculations.rml.ttl
         [ rr:objectMap [ rml:reference "$.numerodepartement" ] ;
             rr:predicate <http://data.lirmm.fr/ontologies/osp#aArrondissement> ] .
 
-#------- Ressource Annonce OK
+#------- Ressource Annonce
 <#Annonce>  rml:logicalSource [ rml:iterator "$.[*].fields" ;
             rml:referenceFormulation ql:JSONPath ;
-            rml:source "procedures-collectives.json" ] ;
+            rml:source "immatriculations-au-registre-du-commerce-et-des-societes.json" ] ;
 
             rr:subjectMap [ rr:class <http://data.europa.eu/eli/ontology#LegalResource> ;
             rr:template "http://ods.dataset.com/Annonce/{numeroannonce}" ] ;
